@@ -1,11 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarRenters</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@200;300;400;600;700&family=Inter:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Sarabun', sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+      background: #000;
+      color: #fff;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      width: 100%;
+      padding: 25px 60px;
+      position: absolute;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .nav-left {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 3px;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      font-size: 15px;
+    }
+
+    .sign-btn {
+      border: 1px solid white;
+      padding: 8px 18px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .sign-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .more-btn {
+        width: 100px;
+        margin-top: 50px;
+      border: 1px solid white;
+      padding: 8px 18px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .more-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* HERO */
+    .hero {
+      width: 100%;
+      height: 100vh;
+      background: url("https://i.shgcdn.com/636b6724-b6c0-4d3e-aea0-d3cf5b9e1180/-/format/auto/-/preview/3000x3000/-/quality/lighter/") center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.45);
+      z-index: 1;
+    }
+    .hero-content {
+      z-index: 5;
+      margin-bottom: 150px;
+    }
+    .hero-content h1 {
+      font-size: 56px;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+    .hero-content p {
+      margin-top: 14px;
+      font-size: 20px;
+      color: #eaeaea;
+    }
+
+    .get-started-btn {
+      margin-top: 25px;
+      padding: 14px 32px;
+      border-radius: 28px;
+      background: #fff;
+      color: #000;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* VISION SECTION */
+    .vision-section {
+      display: flex;
+      padding: 140px 80px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 60px;
+    }
+
+    /* LEFT LINE ACCENT */
+    .vision-text {
+      border-left: 4px solid #fff;
+      padding-left: 28px;
+      height: 400px;
+    }
+
+    .vision-text h3 {
+      font-size: 20px;
+      color: #aaa;
+      margin-bottom: 15px;
+    }
+
+    .vision-text h1 {
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .vision-text p {
+      margin-top: 28px;
+      font-size: 18px;
+      color: #ccc;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    .vision-img img {
+      width: 100%;
+      max-width: 580px;
+      filter: drop-shadow(0 0 30px rgba(255,255,255,0.07));
+    }
+
+    /* Center Footer text */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: #888;
+      margin-top: 0px;
+      font-size: 14px;
+    }
+
+    /* MOBILE */
+    @media(max-width: 900px) {
+      .vision-section {
+        flex-direction: column;
+        padding: 80px 20px;
+        text-align: center;
+      }
+      .vision-text {
+        border-left: none;
+        padding-left: 0;
+        border-top: 4px solid #fff;
+        padding-top: 20px;
+      }
+      .vision-text h1 {
+        font-size: 36px;
+      }
+    }
+
+    /* NAVBAR LINK STYLE */
+    .nav-right a {
+      text-decoration: none;
+      color: #fff;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav-right a span {
+      color: #fff;
+    }
+
+    /* default underline (hidden) */
+    .nav-right a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 2px;
+      background: #fff;
+      transition: 0.1s ease;
+    }
+
+    /* hover underline */
+    .nav-right a:hover::after {
+      width: 100%;
+    }
+
+    /* active page underline */
+    .nav-right a.active::after {
+      width: 100%;
+    }
     
+    /* ขนาด scrollbar แบบบาง */
+    ::-webkit-scrollbar {
+      width: 6px;            /* ทำให้บาง จะได้ไม่กินพื้นที่ */
+    }
+
+    /* ตัว scrollbar */
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+    }
+
+    /* Hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.7);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="nav-left">KCAR</div>
+    <div class="nav-right">
+      <a href="home.html" class="active"><span>Home</span></a>
+      <a href="rent.html"><span>Rent</span></a>
+      <a href="#"><span>About</span></a>
+      <div class="sign-btn">Sign In</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content" data-aos="fade-up">
+      <h1>THE FUTURE OF<br>MOBILITY IS HERE</h1>
+      <p>Discover the safest and smartest car rental experience.</p>
+      <a href="rent.html"><button class="get-started-btn">Get Started</button></a>
+    </div>
+  </section>
+
+  <!-- VISION -->
+  <section class="vision-section">
+    <div class="vision-text" data-aos="fade-right">
+      <h3>Our Vision ㅤ━━━━━━━━</h3>
+      <h1>We are changing the way<br>the world thinks about cars</h1>
+      <p>
+        Our mission is to transform modern mobility with enhanced safety,
+        intelligent tracking, and transparent rental services designed
+        for convenience and reliability.
+      </p>
+      <div class="more-btn">More →</div>
+    </div>
+
+    <div class="vision-img" data-aos="fade-left">
+      <img src="evcar.png">
+    </div>
+  </section>
+
+  <!-- Minimal Footer -->
+  <footer>
+    © 2025 CarRenters Company.
+  </footer>
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
+
 </body>
 </html>

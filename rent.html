@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarRenters</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@200;300;400;600;700&family=Inter:wght@200;300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+
+    :root{
+      --bg:#000;
+      --surface:#0f1720; /* dark card */
+      --muted:#94a3b8;
+      --accent:#0d88c4;
+      --glass: rgba(255,255,255,0.04);
+      --card:#091018;
+      --glass-2: rgba(255,255,255,0.02);
+    }
+
+    .nav{
+      width:100%;
+      padding:20px 40px;
+      position:fixed;top:0;left:0;z-index:50;
+      display:flex;align-items:center;justify-content:space-between;
+      backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(10,14,18,0.45), rgba(10,14,18,0.15));
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .brand{font-weight:700;letter-spacing:2px;font-size:18px;color:var(--accent)}
+    .menu{display:flex;gap:22px;align-items:center}
+    .menu a{color:#fff;text-decoration:none;position:relative;padding-bottom:8px}
+    .menu a span{color:inherit}
+    .menu a::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:#fff;transform:scaleX(0);transform-origin:left;transition:transform .28s ease}
+    .menu a:hover::after{transform:scaleX(1)}
+    .menu a.active::after{transform:scaleX(1)}
+    .cta{background:#fff;color:#000;padding:8px 14px;border-radius:999px;font-weight:600;border:none;cursor:pointer}
+
+    /* Page wrapper */
+    .page{
+      max-width:1200px;margin:120px auto 80px;padding:0 20px;display:grid;grid-template-columns:1fr 420px;gap:36px;align-items:start;
+    }
+
+    /* Left column */
+    .hero-card{background:linear-gradient(180deg, rgba(28, 28, 28, 0.75), rgba(15, 15, 15, 0.75));border-radius:16px;padding:28px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(2,6,12,0.6)}
+    .section-title{font-size:18px;color:var(--accent);font-weight:700;margin-bottom:12px}
+
+    .controls{display:flex;gap:12px;margin-bottom:18px}
+    .controls select, .controls input[type="text"]{color: #000;background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:inherit}
+    .controls button{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;color:#fff;cursor:pointer}
+
+    .car-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+    .car-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:8px}
+    .car-media{width:100%;height:140px;border-radius:10px;background-size:cover;background-position:center;box-shadow:inset 0 0 40px rgba(0,0,0,0.3)}
+    .car-meta{display:flex;justify-content:space-between;align-items:center}
+    .car-meta h4{margin:0;font-size:16px}
+    .tag{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted)}
+    .select-btn{margin-top:8px;padding:8px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;cursor:pointer}
+    .select-btn:hover{background:rgba(255,255,255,0.03)}
+
+    .detail-btn{margin-top:8px;padding:8px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff;cursor:pointer}
+    .detail-btn:hover{background:rgba(255,255,255,0.03)}
+    /* Right column */
+    .panel {
+        position: sticky;
+        top: 100px; /* ระยะห่างจาก top */
+        background: linear-gradient(180deg, rgba(28,28,28,0.75), rgba(15,15,15,0.75));
+        padding: 22px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.03);
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+    
+    .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .input, .select, textarea{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+    textarea{min-height:90px}
+    .primary{background:var(--accent);color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;margin-top:12px}
+    .muted-txt{font-size:13px;color:#93a4b6;margin-top:10px}
+
+    /* status pills */
+    .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted);border:1px solid rgba(255,255,255,0.02);font-size:13px}
+    .pill.active{background:var(--accent);color:#001018;font-weight:700}
+
+    /* rating */
+    .stars{display:flex;gap:6px}
+    .stars button{background:transparent;border:none;color:#4b5563;font-size:20px;cursor:pointer}
+    .stars button.active{color:#ffb400}
+
+    /* small footer */
+    .mini-foot{margin-top:36px;text-align:center;color:#6b7280;font-size:13px}
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Sarabun', sans-serif;
+    }
+
+    body {
+        color: white;
+        background: url("car.png") center center / cover no-repeat fixed !important;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        background-color: #000;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      width: 100%;
+      padding: 25px 60px;
+      position: absolute;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .nav-left {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 3px;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      font-size: 15px;
+    }
+
+    .sign-btn {
+      border: 1px solid white;
+      padding: 8px 18px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .sign-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .more-btn {
+        width: 100px;
+        margin-top: 50px;
+      border: 1px solid white;
+      padding: 8px 18px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .more-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* HERO */
+    .hero {
+      width: 100%;
+      height: 100vh;
+      background: url("car.png") center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.45);
+      z-index: 1;
+    }
+    .hero-content {
+      z-index: 5;
+      margin-bottom: 150px;
+    }
+    .hero-content h1 {
+      font-size: 56px;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+    .hero-content p {
+      margin-top: 14px;
+      font-size: 20px;
+      color: #eaeaea;
+    }
+
+    .get-started-btn {
+      margin-top: 25px;
+      padding: 14px 32px;
+      border-radius: 28px;
+      background: #fff;
+      color: #000;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* VISION SECTION */
+    .vision-section {
+      display: flex;
+      padding: 140px 80px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 60px;
+    }
+
+    /* LEFT LINE ACCENT */
+    .vision-text {
+      border-left: 4px solid #fff;
+      padding-left: 28px;
+      height: 400px;
+    }
+
+    .vision-text h3 {
+      font-size: 20px;
+      color: #aaa;
+      margin-bottom: 15px;
+    }
+
+    .vision-text h1 {
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .vision-text p {
+      margin-top: 28px;
+      font-size: 18px;
+      color: #ccc;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    .vision-img img {
+      width: 100%;
+      max-width: 580px;
+      filter: drop-shadow(0 0 30px rgba(255,255,255,0.07));
+    }
+
+    /* Center Footer text */
+    footer {
+      text-align: center;
+      padding: 40px 0;
+      color: #888;
+      margin-top: 0px;
+      font-size: 14px;
+    }
+
+    /* MOBILE */
+    @media(max-width: 900px) {
+      .vision-section {
+        flex-direction: column;
+        padding: 80px 20px;
+        text-align: center;
+      }
+      .vision-text {
+        border-left: none;
+        padding-left: 0;
+        border-top: 4px solid #fff;
+        padding-top: 20px;
+      }
+      .vision-text h1 {
+        font-size: 36px;
+      }
+    }
+
+    /* NAVBAR LINK STYLE */
+    .nav-right a {
+      text-decoration: none;
+      color: #fff;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav-right a span {
+      color: #fff;
+    }
+
+    /* default underline (hidden) */
+    .nav-right a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -4px;
+      width: 0%;
+      height: 2px;
+      background: #fff;
+      transition: 0.1s ease;
+    }
+
+    /* hover underline */
+    .nav-right a:hover::after {
+      width: 100%;
+    }
+
+    /* active page underline */
+    .nav-right a.active::after {
+        width: 100%;
+    }
+    
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgb(0, 0, 0);  /* โปร่งใส */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);  /* สีเทาโปร่งใส */
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    select, option {
+        background-color: #202020 !important;
+        color: white !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="nav-left">KCAR</div>
+    <div class="nav-right">
+      <a href="home.html"><span>Home</span></a>
+      <a href="rent.html" class="active"><span>Rent</span></a>
+      <a href="#"><span>About</span></a>
+      <div class="sign-btn">Sign In</div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+    <main class="page">
+    <section class="hero-card" data-aos="fade-up">
+      <div class="section-title">Find your car</div>
+      <h2 style="margin:0 0 12px;font-size:28px;font-weight:700">Book a modern, safe ride</h2>
+      <p style="color:var(--muted);margin-bottom:18px">Search by type, view features, then reserve — all in a few clicks.</p>
+
+      <div class="controls" data-aos="fade-up" data-aos-delay="80">
+        <select id="filterType" aria-label="Filter by type">
+          <option value="all">All types</option>
+          <option value="Sedan">Sedan</option>
+          <option value="SUV">SUV</option>
+          <option value="Truck">Truck</option>
+        </select>
+        <input type="text" id="searchBox" placeholder="Search by model (e.g. Model 3)" />
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <div id="carGrid" class="car-grid" data-aos="fade-up" data-aos-delay="160">
+        <!-- Cards injected by JS -->
+      </div>
+
+      <div id="noResult" style="display:none;color:var(--muted);margin-top:18px">No cars match your search.</div>
+    </section>
+
+    <aside class="panel" data-aos="fade-left">
+      <div class="section-title">Your Booking</div>
+      <div style="margin-bottom:10px"><label class="label">Selected car</label>
+        <input id="selectedCar" class="input" readonly placeholder="Select a car from the left" /></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <label class="label">Pick-up</label>
+          <input id="startDate" type="date" class="input" />
+        </div>
+        <div>
+          <label class="label">Drop-off</label>
+          <input id="endDate" type="date" class="input" />
+        </div>
+      </div>
+
+      <label class="label" style="margin-top:12px">Notes</label>
+      <textarea id="notes" placeholder="Any special requests?" ></textarea>
+
+      <button id="bookNow" class="primary" disabled>Book Now</button>
+      <div id="bookMsg" class="muted-txt">No booking saved — demo only.</div>
+
+      <div style="margin-top:18px">
+        <label class="label">Status</label>
+        <div class="pills" id="statusPills">
+          <div class="pill" data-value="Pending">Pending</div>
+          <div class="pill" data-value="Paid">Paid</div>
+          <div class="pill" data-value="Confirmed">Confirmed</div>
+          <div class="pill" data-value="Completed">Completed</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px">
+        <label class="label">Rate your experience</label>
+        <div class="stars" id="stars">
+          <button data-value="1">★</button>
+          <button data-value="2">★</button>
+          <button data-value="3">★</button>
+          <button data-value="4">★</button>
+          <button data-value="5">★</button>
+        </div>
+        <textarea id="review" placeholder="Leave a short review" style="margin-top:10px"></textarea>
+        <button id="sendReview" class="primary" style="margin-top:10px">Send Review</button>
+        <div id="reviewMsg" class="muted-txt"></div>
+      </div>
+
+      <div class="mini-foot">© 2025 CarRenters.</div>
+    </aside>
+  </main>
+
+  <!-- AOS script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({duration:800,once:true});
+
+    // sample car data with real image urls
+    const cars = [
+        {id:1,type:'Sedan',brand:'Toyota',model:'Corolla',year:2020,seats:5,price:1200,img:'https://assets.thaicarlover.com/wp-content/uploads/2019/08/19105642/Toyota-Corolla-%E0%B8%A3%E0%B8%B8%E0%B9%88%E0%B8%99-Nightshade-Edition-9.jpg'},
+        {id:2,type:'SUV',brand:'Honda',model:'CR-V',year:2021,seats:7,price:2200,img:'https://di-uploads-pod25.dealerinspire.com/hondaofcolumbia/uploads/2020/06/A-2020-Honda-CR-V-Touring-parked-on-a-rooftop-in-a-city.png'},
+        {id:3,type:'SUV',brand:'Tesla',model:'Model Y',year:2023,seats:5,price:4800,img:'https://imgcdn.zigwheels.co.th/medium/gallery/exterior/85/3743/tesla-model-y-27214.jpg'},
+        {id:4,type:'Sports',brand:'Porsche',model:'911',year:2021,seats:2,price:4500,img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsgRV77w02o9U6JnayLXxIvqzOrEJHot_ZeQ&s'},
+        {id:5,type:'SUV',brand:'BMW',model:'X5',year:2022,seats:5,price:5000,img:'https://www.checkraka.com/uploaded/logo/80/80be148bb76b4b0da14dc736af7d6fc3.webp'},
+        {id:6,type:'Luxury',brand:'Mercedes-Benz',model:'S-Class',year:2023,seats:5,price:8000,img:'https://file.chobrod.com/2024/02/05/K1otwyzD/capture-20240205-142655-e7b1.webp'},
+        {id:7,type:'Pickup',brand:'Ford',model:'Ranger',year:2019,seats:5,price:1500,img:'https://www.ford.co.th/content/dam/Ford/th/th-th/nameplate/ranger/model-walk/xls/model-walk-xls.webp'},
+        {id:8,type:'SUV',brand:'Audi',model:'Q7',year:2021,seats:7,price:4200,img:'https://cdn.jdpower.com/JDPA_2021%20Audi%20Q7%20White%20Front%20View.jpg'}
+    ];
+
+    const carGrid = document.getElementById('carGrid');
+    const filterType = document.getElementById('filterType');
+    const searchBox = document.getElementById('searchBox');
+    const searchBtn = document.getElementById('searchBtn');
+    const noResult = document.getElementById('noResult');
+
+    function render(list){
+      carGrid.innerHTML='';
+      if(list.length===0){ noResult.style.display='block'; return; } else { noResult.style.display='none'; }
+      list.forEach(c=>{
+        const el = document.createElement('div');
+        el.className='car-card';
+        el.innerHTML = `
+        <div class="car-media" style="background-image:url('${c.img}')" aria-hidden="true"></div>
+        <div class="car-meta">
+            <h4>${c.brand} ${c.model}</h4>
+            <div class="tag">${c.type}</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)">
+            <div>Year ${c.year} • ${c.seats} seats</div>
+            <div style="font-weight:700">฿${c.price}</div>
+        </div>
+        <div style="display:flex;gap:8px; margin-top:8px">
+            <button class="select-btn" data-id="${c.id}">Select</button>
+            <button class="detail-btn" data-id="${c.id}">Detail</button>
+        </div>
+        `;
+        carGrid.appendChild(el);
+      });
+
+      // bind select
+      carGrid.querySelectorAll('.select-btn').forEach(b=>b.addEventListener('click',e=>{
+        const id = Number(b.getAttribute('data-id'));
+        const car = cars.find(x=>x.id===id);
+        document.getElementById('selectedCar').value = `${car.brand} ${car.model} (${car.type} • ${car.year})`;
+        document.getElementById('bookNow').disabled = false;
+        // scroll to panel on mobile
+        if(window.innerWidth < 980) document.querySelector('.panel').scrollIntoView({behavior:'smooth'});
+      }));
+    }
+
+    render(cars);
+
+    // search/filter
+    searchBtn.addEventListener('click',()=>{
+      const t = filterType.value;
+      const q = searchBox.value.trim().toLowerCase();
+      const filtered = cars.filter(c=> (t==='all' || c.type===t) && (q === '' || (`${c.brand} ${c.model}`).toLowerCase().includes(q)) );
+      render(filtered);
+    });
+
+    // booking
+    document.getElementById('bookNow').addEventListener('click',()=>{
+      const selected = document.getElementById('selectedCar').value;
+      const start = document.getElementById('startDate').value;
+      const end = document.getElementById('endDate').value;
+      const msg = document.getElementById('bookMsg');
+      if(!selected || !start || !end){ msg.textContent='Please select a car and pick-up / drop-off dates.'; msg.style.color='#f97316'; return; }
+      msg.textContent = 'Booking requested — demo only. Status: Pending.'; msg.style.color='#60a5fa';
+      // set pending pill active
+      setStatus('Pending');
+    });
+
+    // status pills
+    const pills = document.querySelectorAll('.pill');
+    function setStatus(val){ pills.forEach(p=>p.classList.toggle('active', p.dataset.value===val)); }
+    pills.forEach(p=>p.addEventListener('click',()=>setStatus(p.dataset.value)));
+    setStatus('Pending');
+
+    // rating
+    const stars = document.querySelectorAll('#stars button');
+    let rating = 0;
+    stars.forEach(s=>s.addEventListener('click',()=>{
+      rating = Number(s.dataset.value);
+      stars.forEach(x=> x.classList.toggle('active', Number(x.dataset.value) <= rating));
+    }));
+
+    document.getElementById('sendReview').addEventListener('click',()=>{
+      const text = document.getElementById('review').value.trim();
+      const msg = document.getElementById('reviewMsg');
+      if(rating===0 || !text){ msg.textContent='Please rate and leave a short review.'; msg.style.color='#f97316'; return; }
+      msg.textContent='Thank you! Your review was recorded (demo).'; msg.style.color='#60a5fa';
+      document.getElementById('review').value='';
+      rating = 0; stars.forEach(x=>x.classList.remove('active'));
+    });
+
+    // nav active underline: if you use multiple pages, add 'active' class server-side or set here by pathname
+    document.querySelectorAll('.menu a').forEach(a=>{
+      a.addEventListener('click',()=>{
+        document.querySelectorAll('.menu a').forEach(x=>x.classList.remove('active'));
+        a.classList.add('active');
+      });
+    });
+
+  </script>
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
+
+</body>
+</html>
